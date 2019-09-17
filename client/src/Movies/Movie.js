@@ -34,7 +34,11 @@ const Movie = (props) => {
 	return (
 		<div className="save-wrapper">
 			<MovieCard movie={movie} />
-			<div className="save-button" onClick={saveMovie}>Save</div>
+			{
+				!props.savedList.find(savedMovie => savedMovie.id === movie.id) ? 
+				<div className="save-button" onClick={saveMovie}>Save</div> : 
+				<div className="save-button">Saved</div>
+			}
 		</div>
 	);
 }
