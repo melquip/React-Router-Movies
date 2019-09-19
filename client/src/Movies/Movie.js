@@ -1,57 +1,46 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
+import MovieCard from './MovieCard';
+
 const Movie = (props) => {
-  const [movie, setMovie] = useState({});
- 
-  useEffect(() => {
-    const id = 1;
-    // change ^^^ that line and grab the id from the URL
-    // You will NEED to add a dependency array to this effect hook
+	const [movie, setMovie] = useState({});
 
-       axios
-        .get(`http://localhost:5000/api/movies/${id}`)
-        .then(response => {
-          setMovie(response.data);
-        })
-        .catch(error => {
-          console.error(error);
-        });
+	useEffect(() => {
+		const id = props.match.params.id;
+		// change ^^^ that line and grab the id from the URL
+		// You will NEED to add a dependency array to this effect hook
 
-  },[]);
-  
-  // Uncomment this only when you have moved on to the stretch goals
-  // const saveMovie = () => {
-  //   const addToSavedList = props.addToSavedList;
-  //   addToSavedList(movie)
-  // }
+		axios
+			.get(`http://localhost:5000/api/movies/${id}`)
+			.then(response => {
+				setMovie(response.data);
+			})
+			.catch(error => {
+				console.error(error);
+			});
+	}, [props.match.params.id]);
 
-  if (!movie) {
-    return <div>Loading movie information...</div>;
-  }
+	// Uncomment this only when you have moved on to the stretch goals
+	const saveMovie = () => {
+		const addToSavedList = props.addToSavedList;
+		addToSavedList(movie)
+	}
 
-  const { title, director, metascore, stars } = movie;
-  return (
-    <div className="save-wrapper">
-      <div className="movie-card">
-        <h2>{title}</h2>
-        <div className="movie-director">
-          Director: <em>{director}</em>
-        </div>
-        <div className="movie-metascore">
-          Metascore: <strong>{metascore}</strong>
-        </div>
-        <h3>Actors</h3>
+	if (!movie) {
+		return <div>Loading movie information...</div>;
+	}
 
-        {stars.map(star => (
-          <div key={star} className="movie-star">
-            {star}
-          </div>
-        ))}
-      </div>
-      <div className="save-button">Save</div>
-    </div>
-  );
+	return (
+		<div className="save-wrapper">
+			<MovieCard movie={movie} />
+			{
+				!props.savedList.find(savedMovie => savedMovie.id === movie.id) ? 
+				<div className="save-button" onClick={saveMovie}>Save</div> : 
+				<div className="save-button">Saved</div>
+			}
+		</div>
+	);
 }
 
 export default Movie;
